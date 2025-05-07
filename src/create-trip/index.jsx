@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import CityAutocomplete from "../components/CityAutocomplete";
 import { Input } from "../components/ui/input";
 import { SelectBudgetOptions, SelectTravelesList } from "../constants/options";
@@ -113,6 +113,7 @@ function CreateTrip() {
   };
 
   return (
+    
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
       <h2 className="font-bold text-3xl text-center">
         Tell Your Preferences 🚗 ✈️ 🌴
@@ -192,6 +193,7 @@ function CreateTrip() {
           ))}
         </div>
       </div>
+      
 
       <div className="my-10 flex justify-end">
         <Button disabled={loading} onClick={OnGenerateTrip}>

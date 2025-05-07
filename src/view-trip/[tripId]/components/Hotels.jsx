@@ -1,33 +1,37 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchPlaceImage } from "../../../service/GloablApi"; // Import the API service for fetching images
+import { fetchPlaceImage } from "../../../service/GloablApi"; // Ensure this import path is correct
 
 function Hotels({ trip }) {
   const hotels = trip?.tripData?.hotels || [];
-  const [hotelImages, setHotelImages] = useState({}); // Store images for each hotel
+  const [hotelImages, setHotelImages] = useState({});
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const newImages = {}; // Object to store hotel images
+    async function fetchImages() {
+      const newImages = {};
 
-      // Loop through hotels and fetch images for each hotel
       for (const hotel of hotels) {
         const hotelName = hotel?.hotelName;
-
         if (hotelName) {
-          // Fetch image for the hotel using fetchPlaceImage or a similar function
-          const image = await fetchPlaceImage(hotelName);
-          newImages[hotelName] = image; // Save the fetched image for the hotel
+          try {
+            const image = await fetchPlaceImage(hotelName);
+            console.log(`Fetched image for ${hotelName}:`, image); // Debugging log
+            newImages[hotelName] = image || "/airplane.jpeg"; // Fallback to default image
+          } catch (error) {
+            console.error(`Error fetching image for ${hotelName}:`, error);
+            newImages[hotelName] = "/airplane.jpeg"; // Fallback to default image
+          }
         }
       }
 
-      setHotelImages(newImages); // Update state with the fetched images
-    };
+      console.log("Final hotel images:", newImages); // Debugging log
+      setHotelImages(newImages);
+    }
 
     if (hotels.length > 0) {
-      fetchImages(); // Call function to fetch images
+      fetchImages();
     }
-  }, [hotels]); // Dependency array to re-run when hotels list changes
+  }, [hotels]); // Correct dependency array
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -37,30 +41,22 @@ function Hotels({ trip }) {
         {hotels.map((item, index) => (
           <Link
             target="_blank"
-            to={
-              "https://www.google.com/maps/search/?api=1&query=" +
-              item?.hotelName +
-              ", " +
-              item?.hotelAddress
-            }
+            to={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              item?.hotelName + ", " + item?.hotelAddress
+            )}`}
             className="hover:scale-105 transition-all cursor-pointer"
             key={index}
           >
             <div className="border rounded-lg shadow-md hover:shadow-lg">
-              {/* Hotel image with a fixed height */}
               <img
-                src={hotelImages[item?.hotelName] || item?.imageUrl || "/airplane.jpeg"} // Use dynamic image or fallback
+                src={hotelImages[item?.hotelName] || item?.imageUrl || "/airplane.jpeg"}
                 className="w-full h-48 object-cover rounded-t-lg"
                 alt={item?.hotelName || "Hotel"}
               />
               <div className="p-4">
-                {/* Hotel Name */}
                 <h2 className="font-medium text-lg">{item?.hotelName}</h2>
-                {/* Hotel Address */}
                 <h2 className="text-xs text-gray-500">📍 {item?.hotelAddress}</h2>
-                {/* Price */}
                 <h2 className="text-sm text-gray-700 mt-2">💰 Price: ₹{item?.price}</h2>
-                {/* Rating */}
                 <h2 className="text-sm text-gray-700 mt-2">⭐ Rating: {item?.rating}</h2>
               </div>
             </div>
@@ -70,5 +66,23 @@ function Hotels({ trip }) {
     </div>
   );
 }
+
+import PropTypes from "prop-types";
+
+Hotels.propTypes = {
+  trip: PropTypes.shape({
+    tripData: PropTypes.shape({
+      hotels: PropTypes.arrayOf(
+        PropTypes.shape({
+          hotelName: PropTypes.string,
+          hotelAddress: PropTypes.string,
+          price: PropTypes.number,
+          rating: PropTypes.number,
+          imageUrl: PropTypes.string,
+        })
+      ),
+    }),
+  }),
+};
 
 export default Hotels;

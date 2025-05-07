@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { doc, getDoc } from 'firebase/firestore';
@@ -10,16 +10,20 @@ import Footer from './components/Footer';
 
 function ViewTrip() {
     const { tripId } = useParams(); 
-    const [trip,setTrip]=useState(null); // State to hold trip data
-    
+    const [trip, setTrip] = useState(null); // State to hold trip data
+    const [loading, setLoading] = useState(false); // State to track loading status
+
     useEffect(() => {
-       tripId && GetTripData(); // Fetch trip data when tripId is available
+        if (tripId) {
+            GetTripData(); // Fetch trip data when tripId is available
+        }
     }, [tripId]); 
 
     /**
      * Fetch trip data from Firestore
      */
     const GetTripData = async () => {
+        setLoading(true); // Set loading to true before fetching data
         try {
             const docRef = doc(db, "AITrips", tripId);
             const docSnap = await getDoc(docRef);
@@ -27,28 +31,35 @@ function ViewTrip() {
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data());
                 setTrip(docSnap.data()); // Set trip data to state
-                toast("Trip data fetched successfully!");
+                toast.success("Trip data fetched successfully!");
             } else {
                 console.log("No such document!");
-                toast("No trip found!");
+                toast.error("No trip found!");
             }
         } catch (error) {
             console.error("Error fetching trip:", error);
-            toast("Error fetching trip data.");
+            toast.error("Error fetching trip data.");
+        } finally {
+            setLoading(false); // Set loading to false after fetching data
         }
     };
 
     return (
-        <div
-        className='p-10 m:px-20 lg:px-44 xl:px-56' >
-            {/* Information section */}
-            <InfoSection trip={trip} />
-            {/* Recomended hotels */}
-            <Hotels  trip={trip}/>
-            {/* Daily plan */}
-            <PlacesToVisit trip={trip} />
-            {/* Footer */}
-            <Footer trip={trip} />
+        <div className='   p-10 m:px-20 lg:px-44 xl:px-56'>
+            {loading ? (
+                <div className="text-center text-lg font-bold">Loading trip data...</div>
+            ) : (
+                <>
+                    {/* Information section */}
+                    <InfoSection trip={trip} />
+                    {/* Recommended hotels */}
+                    <Hotels trip={trip} />
+                    {/* Daily plan */}
+                    <PlacesToVisit trip={trip} />
+                    {/* Footer */}
+                    <Footer trip={trip} />
+                </>
+            )}
         </div>
     );
 }

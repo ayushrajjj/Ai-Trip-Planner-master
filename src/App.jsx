@@ -4,6 +4,7 @@ import Hero from './components/custom/Hero';
 const App = () => {
   return (
     <> 
+    
     <Hero />
     </>
   );
