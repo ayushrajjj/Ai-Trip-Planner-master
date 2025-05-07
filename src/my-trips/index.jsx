@@ -4,7 +4,7 @@ import { getDocs } from 'firebase/firestore';
 import { collection, query, where } from 'firebase/firestore';
 
 import { db } from '../service/firebaseConfig'; // Import your Firebase configuration
-import UserTripCardItem from './components/USerTripCardItem';
+import UserTripCardItem from './components/UserTripCardItem';
 
 function MyTrip() {
   const [userTrips, setUserTrips] = useState([]); // State to store user trips
@@ -36,7 +36,7 @@ function MyTrip() {
       <div className='grid grid-cols-2 md:grid-cols-3 mt-10 gap-5'>
         {userTrips.map((trip) => (
           
-            <UserTripCardItem key={trip} trip={trip} /> 
+            <UserTripCardItem  key={trip} trip={trip} /> 
           
         ))}
       </div>
