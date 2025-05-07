@@ -29,6 +29,7 @@ function MyTrip() {
   useEffect(() => {
     GetUsertrips();
   }, [GetUsertrips]);
+  console.log("VITE_GOOGLE_AUTH_CLIENT_ID", import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID);
 
   return (
     <div className=' sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10'>
@@ -37,6 +38,7 @@ function MyTrip() {
         {userTrips.map((trip) => (
           
             <UserTripCardItem  key={trip} trip={trip} /> 
+            
           
         ))}
       </div>
