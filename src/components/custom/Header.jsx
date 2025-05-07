@@ -34,7 +34,7 @@ const Header = () => {
 
       console.log('User data to store:', userData); // Debugging: Log the extracted user data
       localStorage.setItem('user', JSON.stringify(userData)); // Store user data in localStorage
-      setUser(userData); // Set the user state
+      setUser(userData); 
     } catch (error) {
       console.error('Error during sign-in:', error);
     }
